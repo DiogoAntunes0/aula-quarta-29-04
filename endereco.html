@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca CEP</title>
+</head>
+<body>
+    <h2>Busca de CEP</h2>
+
+    <input type="text" id="cep" placeholder="Digite o CEP" maxlength="8">
+    <button id="btn">Buscar</button>
+
+    <div id="resultado"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $("#btn").click(function() {
+            let cep = $("#cep").val().replace(/\D/g, "");
+
+            if (cep.length !== 8) {
+                $("#resultado").html("<p>CEP inválido. Digite 8 números.</p>");
+                return;
+            }
+
+            $.getJSON("https://viacep.com.br/ws/" + cep + "/json/", function(data) {
+                if (data.erro) {
+                    $("#resultado").html("<p>CEP não encontrado.</p>");
+                    return;
+                }
+
+                $("#resultado").html(`
+                    <p><b>Logradouro:</b> ${data.logradouro}</p>
+                    <p><b>Bairro:</b> ${data.bairro}</p>
+                    <p><b>Cidade:</b> ${data.localidade}</p>
+                    <p><b>Estado:</b> ${data.uf}</p>
+                    <p><b>CEP:</b> ${data.cep}</p>
+                `);
+            }).fail(function() {
+                $("#resultado").html("<p>Erro ao buscar o CEP.</p>");
+            });
+        });
+    </script>
+</body>
+</html>
